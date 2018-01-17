@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+LAPTOP_DISPLAY=eDP-1
+DESK_DISPLAY_1=DP-2-1
+DESK_DISPLAY_2=DP-2-2
+
+xrandr --addmode $DESK_DISPLAY_2 1600x900
+xrandr --addmode $DESK_DISPLAY_1 1920x1080
+
+if $(cat /proc/acpi/button/lid/LID/state |  grep -q open) ; then
+	echo "Configuring display for open laptop lid" | systemd-cat --priority=info --identifier="set-display.sh"
+	xrandr --output $DESK_DISPLAY_1 --off --output $DESK_DISPLAY_2 --off --output $LAPTOP_DISPLAY --auto
+	xfconf-query --channel xfce4-panel --property /panels/panel-1/output-name --set monitor-0
+else
+	echo "Configuring display for closed laptop lid" | systemd-cat --priority=info --identifier="set-display.sh"
+	xrandr --output $DESK_DISPLAY_1 --mode 1920x1080 --primary
+	xrandr --output $DESK_DISPLAY_2 --mode 1600x900 --rotate 'left' --left-of $DESK_DISPLAY_1
+	xrandr --output $LAPTOP_DISPLAY --off
+  xfconf-query --channel xfce4-panel --property /panels/panel-1/output-name --set monitor-1
+fi

@@ -1,0 +1,14 @@
+next_color=4
+viewer_size=128
+viewer_text_overlay_position=3
+use_background_color=false
+viewer_text_overlay_enabled=true
+viewer_text_overlay_color=-1
+viewer_text_overlay_format_string=%m
+
+[1]
+type=cpu_usage
+cpu_no=-1
+tag=
+color=-2050722305
+

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+theme=$1
+
+case $theme in
+   forest_lake|purple_lake_dock)
+     ;;
+   *)
+      echo "Not a valid theme"
+      echo "Not a valid theme" | systemd-cat --priority=err --identifier="change-theme.sh"
+      exit 1
+      ;;
+esac
+
+themesDir=/home/ncc/documents/dotfiles/themes
+
+# Change system symlinks
+echo "Changing theme symlinks" | systemd-cat --priority=info --identifier="change-theme.sh"
+rm  /home/ncc/.Xresources.d
+rm  /home/ncc/.config/xfce4/panel
+ln -sf $themesDir/$theme/.Xresources.d /home/ncc/.Xresources.d
+ln -sf $themesDir/$theme/panel /home/ncc/.config/xfce4/panel
+
+# Change GTK theme
+echo "Changing gtk theme" | systemd-cat --priority=info --identifier="change-theme.sh"
+xfconf-query --channel xsettings --property /Net/ThemeName --set Adapta-Nokto-Eta
+
+# Change background
+echo "Changing background" | systemd-cat --priority=info --identifier="change-theme.sh"
+i3-msg 'exec_always feh --bg-fill /home/ncc/.Xresources.d/wallpaper'
+
+# Reload .Xresources
+echo "Reloading .Xresources" | systemd-cat --priority=info --identifier="change-theme.sh"
+xrdb -I$HOME ~/.Xresources
+
+# Refresh i3
+echo "Refreshing i3" | systemd-cat --priority=info --identifier="change-theme.sh"
+i3-msg restart
+
+# Reload xfce4-panel
+echo "Reloading xfce4-panel" | systemd-cat --priority=info --identifier="change-theme.sh"
+xfce4-panel -r

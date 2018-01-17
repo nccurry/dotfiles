@@ -1,0 +1,83 @@
+! Load theme
+#include "/home/ncc/.Xresources.d/theme"
+
+! Set colors
+*background:              theme_background
+*foreground:              theme_foreground
+*text:                    theme_text
+*border:                  theme_foreground
+
+! BLACK
+*color0:                  theme_color0
+*color8:                  theme_color8
+! RED
+*color1:                  theme_color1
+*color9:                  theme_color9
+! GREEN
+*color2:                  theme_color2
+*color10:                 theme_color10
+! YELLOW
+*color3:                  theme_color3
+*color11:                 theme_color11
+! BLUE
+*color4:                  theme_color4
+*color12:                 theme_color12
+! MAGENTA
+*color5:                  theme_color5
+*color13:                 theme_color13
+! CYAN
+*color6:                  theme_color6
+*color14:                 theme_color14
+! WHITE
+*color7:                  theme_color7
+*color15:                 theme_color15
+
+! URxvt
+
+URxvt.urlLauncher:        google-chrome
+URxvt*foreground:         theme_foreground_urxvt
+URxvt*depth:              32
+URxvt*background:         theme_background_urxvt
+URxvt*font:               xft:Source Code Pro:size=12
+URxvt*boldfont:           xft:Source Code Pro:bold:size=12
+URxvt*scrollBar:          true
+URxvt*thickness:          5
+URxvt*scrollColor:        theme_foreground
+URxvt*scrollBar_floating: true
+URxvt*scrollBar_right:    true
+URxvt*scrollstyle:        plain
+! do not scroll with output
+URxvt*scrollTtyOutput:      false
+URxvt*scrollWithBuffer:     true
+URxvt*scrollTtyKeypress:    true
+URxvt.secondaryScreen:  1
+URxvt.secondaryScroll:  0
+URxvt.secondaryWheel:   1
+URxvt*termName:         rxvt
+! clickable urls
+URxvt.perl-ext-common:      default,matcher,selection-to-clipboard,clipboard
+URxvt.url-launcher:         /usr/bin/xdg-open
+URxvt.matcher.button:       1
+URxvt.url-select.underline: true
+! copy paste
+URxvt.clipboard.autocopy:   true
+URxvt.clipboard.copycmd:    xclip -i -selection clipboard
+URxvt.clipboard.pastecmd:   xclip -o -selection clipboard
+! disable default bindings for Control-Shift
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+! Control-Shift-C for copy
+URxvt.keysym.C-C: perl:clipboard:copy
+URxvt.keysym.C-V: perl:clipboard:paste
+URxvt.keysym.Control-v: perl:clipboard:paste
+
+! Rofi
+rofi.color-enabled:       true
+rofi.color-window:        theme_background_rofi, theme_foreground_rofi, theme_foreground_rofi
+rofi.color-normal:        theme_invisible, theme_foreground_rofi, theme_invisible, theme_foreground_rofi, theme_text
+rofi.color-active:        theme_foreground_accent, theme_text, theme_foreground_accent, theme_foreground_rofi, theme_text
+rofi.color-urgent:        theme_urgent, theme_text, theme_urgent, theme_urgent, theme_text
+
+! Misc
+*utf8:                  1
+*saveLines:             999999

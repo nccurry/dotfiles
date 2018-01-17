@@ -1,0 +1,195 @@
+- hosts: localhost
+  connection: local
+	become: yes
+  gather_facts: yes
+  vars:
+  - install_base: yes
+  - install_arc_icons: yes
+  - install_adapta: yes
+  - install_dotfiles: yes
+  - install_theme: no
+  - dotfiles:
+    - path: ~/.config/i3
+      src: i3
+    - path: ~/.config/polybar
+      src: polybar
+    - path: ~/.Xresources
+      src: .Xresources
+    - path: ~/.bashrc
+      src: .bashrc
+    - path: ~/.bash_profile
+      src: .bash_profile
+    - path: ~/.exports
+      src: .exports
+    - path: ~/.config/user-dirs.dirs
+      src: user-dirs.dirs
+  - base_packages:
+    - vim
+    - fuse-exfat
+    - tree
+    - git
+    - fontawesome-fonts
+    - flash-plugin
+    - i3
+    - feh
+    - compton
+    - rofi
+    - i3lock
+    - adobe-source-code-pro-fonts
+    - qdirstat
+  - development_packages:
+    - vagrant
+    - httpie
+    - golang
+    - VirtualBox
+  - polybar_packages:
+    - cmake
+    - #development-tools
+    - gcc-c++
+    - cairo-devel
+    - xcb-util-devel
+    - xcb-util-wm-devel
+    - xcb-util-image-devel
+    - xcb-util-cursor-devel
+    - xcb-util-xrm-devel
+    - i3-ipc
+    - jsoncpp-devel
+    - alsa-lib-devel
+    - wireless-tools-devel
+    - libmpdclient-devel
+    - libcurl-devel
+  - arc_icon_packages:
+    - autoconf
+    - automake
+  - adapta_theme_packages:
+    -
+
+  tasks:
+  - name: Install base configuration
+    block:
+    - name: Add yaroslav copr repo for i3
+      yum_repository:
+        state: present
+        file: /etc/yum.repos.d/_copr_yaroslav-i3desktop.repo
+        name: Copr repo for i3desktop owned by yaroslav
+        baseurl: https://copr-be.cloud.fedoraproject.org/results/yaroslav/i3desktop/fedora-$releasever-$basearch/
+        skip_if_unavailable: yes
+        gpgcheck: yes
+        gpgkey: https://copr-be.cloud.fedoraproject.org/results/yaroslav/i3desktop/pubkey.gpg
+        repo_gpgcheck: no
+        enabled: yes
+
+    - name: Add RPMFusion repositories
+      dnf:
+        name: "{{ item }}"
+        state: present
+        with_items:
+        - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm"
+        - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm"
+
+    - name: Update OS packages
+      dnf:
+        name: *
+        state: latest
+
+    - name: Install base packages
+      dnf:
+        name: "{{ item }}"
+        state: present
+        with_items: base_packages
+
+    - name: Check if Atom RPM is already installed
+      command: rpm -q atom
+      changed_when: false
+      register: atom_installed
+
+    - name: Download Atom RPM
+      get_url:
+        url: https://atom.io/download/rpm
+        dest: /tmp/atom.rpm
+      when: atom_installed.rc == 1
+
+    - name: Install Atom
+      dnf:
+        name: /tmp/atom.rpm
+        state: latest
+      when: atom_installed.rc == 1
+
+    - name: Configure passwordless sudo for wheel
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Configure system to not sleep on laptop lid close when docked
+      lineinfile:
+        dest: /etc/systemd/logind.conf
+        state: present
+        regexp: '#HandleLidSwitchDocked=ignore'
+        line: 'HandleLidSwitchDocked=ignore'
+    when: install_base
+
+  - name: Build/Install Polybar
+    block:
+    - name: Install Polybar build dependencies
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ polybar_packages }}"
+
+    -
+    when: install_polybar
+
+  - name: Build/Install Arc Icons
+    block:
+    - name: Install build dependencies
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ arc_icon_packages }}"
+
+    - name: Clone Arc Icons Source
+      git:
+        dest: ~/documents/src/arc-icon-theme
+        depth: 1
+        repo: https://github.com/horst3180/arc-icon-theme.git
+
+    - name: Run autogen.sh
+      shell: "~/documents/src/arc-icon-theme/autogen.sh --prefix=/usr"
+
+    - name: Make install
+      make:
+        chdir: ~/documents/src/arc-icon-theme
+        target: install
+      become: yes
+
+    - name: Set system icons to Arc icons
+      command: xfconf-query --channel xsettings --property /Net/IconThemeName --set Arc
+    when: install_arc_icons
+
+    - name: Symlink dotfiles
+      file:
+        path: "{{ item.path }}"
+        src: "{{ playbook_dir }}/{{ item.src }}"
+        follow: no
+        force: yes
+        state: link
+    with_items: "{{ dotfiles }}"
+
+    - name: Fix Xfce4 issue where .Xresources doesn't get loaded properly on boot
+      lineinfile:
+        path: /etc/xdg/xfce4/xinitrc
+        state: present
+        line: 'cat /dev/null $XRESOURCES | xrdb -merge -'
+        regexp: 'cat /dev/null $XRESOURCES | xrdb -nocpp -merge -'
+        backup: yes
+
+    when: install_dotfiles
+
+    - name: Install default theme
+    when: install_dotfiles
+  - name: Install theme
+    block:
+    - name:
