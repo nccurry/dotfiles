@@ -1,0 +1,53 @@
+! Theme
+#define theme_background            #263238
+#define theme_background_urxvt  [80]#263238
+#define theme_background_rofi       #000f1416
+#define theme_foreground            #98B3DD
+#define theme_foreground_urxvt      #98B3DD
+#define theme_foreground_rofi       #98B3DD
+#define theme_foreground_accent     #B06FB6
+#define theme_text                  #E8E5EE
+#define theme_invisible             #00000000
+#define theme_border                #98B3DD
+#define theme_urgent                #B44448
+
+! #E8E5EE
+! #98B3DD
+! #2C4FB9
+! #8E48BC
+! #B06FB6
+! #FAFBFC
+! #263238
+! #00BCD4
+
+! Black
+#define theme_color0  #252525
+#define theme_color8  #454545
+
+! Red
+#define theme_color1  #835f4f
+#define theme_color9  #be5224
+
+! Green
+#define theme_color2  #00BCD4
+#define theme_color10 #69E1EF
+
+! Yellow
+#define theme_color3  #FD971F
+#define theme_color11 #C06702
+
+! Blue
+#define theme_color4  #6495ED
+#define theme_color12 #758ba3
+
+! Magenta
+#define theme_color5  #755b76
+#define theme_color13 #9f76a3
+
+! Cyan
+#define theme_color6  #d9c964
+#define theme_color14 #d9cf8f
+
+! White
+#define theme_color7  #DBDCDC
+#define theme_color15 #FDFDFD

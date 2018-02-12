@@ -4,17 +4,18 @@
   gather_facts: yes
   vars:
   - install_base: yes
-  - install_arc_icons: yes
-  - install_adapta: yes
+  - install_arc_icons: no
+  - install_adapta: no
   - install_dotfiles: yes
-  - install_theme: no
   - dotfiles:
-    - path: ~/.config/i3
-      src: i3
-    - path: ~/.config/polybar
-      src: polybar
+    - path: ~/.config/i3/config
+      src: themes/default/i3.config
+    - path: ~/.config/polybar/config
+      src: themes/default/polybar.config
     - path: ~/.Xresources
       src: .Xresources
+    - path: ~/.Xresources.d
+      src: themes/default
     - path: ~/.bashrc
       src: .bashrc
     - path: ~/.bash_profile
@@ -30,21 +31,26 @@
     - git
     - fontawesome-fonts
     - flash-plugin
-    - i3
+    - i3-gaps
+    - rxvt-unicode
     - feh
     - compton
     - rofi
     - i3lock
     - adobe-source-code-pro-fonts
     - qdirstat
+    - '@virtulization'
+    - ImageMagick
+    - scrot
+    - adapta-gtk-theme
   - development_packages:
-    - vagrant
     - httpie
     - golang
-    - VirtualBox
+    - python3
+    - nodejs
   - polybar_packages:
     - cmake
-    - #development-tools
+    - '@development-tools'
     - gcc-c++
     - cairo-devel
     - xcb-util-devel
@@ -61,9 +67,7 @@
   - arc_icon_packages:
     - autoconf
     - automake
-  - adapta_theme_packages:
-    -
-
+  - adapta_theme_packages: []
   tasks:
   - name: Install base configuration
     block:
@@ -98,23 +102,6 @@
         state: present
         with_items: base_packages
 
-    - name: Check if Atom RPM is already installed
-      command: rpm -q atom
-      changed_when: false
-      register: atom_installed
-
-    - name: Download Atom RPM
-      get_url:
-        url: https://atom.io/download/rpm
-        dest: /tmp/atom.rpm
-      when: atom_installed.rc == 1
-
-    - name: Install Atom
-      dnf:
-        name: /tmp/atom.rpm
-        state: latest
-      when: atom_installed.rc == 1
-
     - name: Configure passwordless sudo for wheel
       lineinfile:
         dest: /etc/sudoers
@@ -131,6 +118,37 @@
         line: 'HandleLidSwitchDocked=ignore'
     when: install_base
 
+  - name: Symlink dotfiles
+    file:
+      path: "{{ item.path }}"
+      src: "{{ playbook_dir }}/{{ item.src }}"
+      follow: no
+      force: yes
+      state: link
+    with_items: "{{ dotfiles }}"
+    when: "{{ install_dotfiles }}"
+
+  - name: Fix Xfce4 issue where .Xresources doesn't get loaded properly on boot
+    lineinfile:
+      path: /etc/xdg/xfce4/xinitrc
+      state: present
+      line: 'cat /dev/null $XRESOURCES | xrdb -merge -'
+      regexp: 'cat /dev/null $XRESOURCES | xrdb -nocpp -merge -'
+      backup: yes
+
+  - name: Add wheel group to govern access to libvirt daemon
+    create: yes
+    blockinfile:
+      state: present
+      path: /etc/polkit-1/rules.d/49-org.libvirt.unix.manager.rules
+      content: |
+        polkit.addRule(function(action, subject) {
+            if (action.id == "org.libvirt.unix.manage" &&
+                subject.isInGroup("wheel")) {
+                    return polkit.Result.YES;
+            }
+        });
+
   - name: Build/Install Polybar
     block:
     - name: Install Polybar build dependencies
@@ -138,6 +156,12 @@
         name: "{{ item }}"
         state: present
       with_items: "{{ polybar_packages }}"
+
+    - name: Clone source
+      git:
+        repo: https://github.com/jaagr/polybar.git
+        dest: /tmp/polybar
+        version: "{{ polybar_version }}"
 
     -
     when: install_polybar
@@ -168,28 +192,3 @@
     - name: Set system icons to Arc icons
       command: xfconf-query --channel xsettings --property /Net/IconThemeName --set Arc
     when: install_arc_icons
-
-    - name: Symlink dotfiles
-      file:
-        path: "{{ item.path }}"
-        src: "{{ playbook_dir }}/{{ item.src }}"
-        follow: no
-        force: yes
-        state: link
-    with_items: "{{ dotfiles }}"
-
-    - name: Fix Xfce4 issue where .Xresources doesn't get loaded properly on boot
-      lineinfile:
-        path: /etc/xdg/xfce4/xinitrc
-        state: present
-        line: 'cat /dev/null $XRESOURCES | xrdb -merge -'
-        regexp: 'cat /dev/null $XRESOURCES | xrdb -nocpp -merge -'
-        backup: yes
-
-    when: install_dotfiles
-
-    - name: Install default theme
-    when: install_dotfiles
-  - name: Install theme
-    block:
-    - name:
