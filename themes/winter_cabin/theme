@@ -1,7 +1,7 @@
 ! Theme
 #define theme_background            #263238
 #define theme_background_urxvt  [80]#263238
-#define theme_background_rofi       #000f1416
+#define theme_background_rofi       #CC263238
 #define theme_foreground            #98B3DD
 #define theme_foreground_urxvt      #98B3DD
 #define theme_foreground_rofi       #98B3DD
@@ -20,34 +20,34 @@
 ! #263238
 ! #00BCD4
 
-! Black
-#define theme_color0  #252525
-#define theme_color8  #454545
+! black
+*.color0:       #282a2e
+*.color8:       #373b41
 
-! Red
-#define theme_color1  #835f4f
-#define theme_color9  #be5224
+! red
+*.color1:       #a54242
+*.color9:       #cc6666
 
-! Green
-#define theme_color2  #00BCD4
-#define theme_color10 #69E1EF
+! green
+*.color2:       #8c9440
+*.color10:      #b5bd68
 
-! Yellow
-#define theme_color3  #FD971F
-#define theme_color11 #C06702
+! yellow
+*.color3:       #de935f
+*.color11:      #f0c674
 
-! Blue
-#define theme_color4  #6495ED
-#define theme_color12 #758ba3
+! blue
+*.color4:       #5f819d
+*.color12:      #81a2be
 
-! Magenta
-#define theme_color5  #755b76
-#define theme_color13 #9f76a3
+! magenta
+*.color5:       #85678f
+*.color13:      #b294bb
 
-! Cyan
-#define theme_color6  #d9c964
-#define theme_color14 #d9cf8f
+! cyan
+*.color6:       #5e8d87
+*.color14:      #8abeb7
 
-! White
-#define theme_color7  #DBDCDC
-#define theme_color15 #FDFDFD
+! white
+*.color7:       #707880
+*.color15:      #c5c8c6

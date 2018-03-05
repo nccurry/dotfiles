@@ -21,3 +21,4 @@ export MANPAGER="less -X";
 
 # Go
 export GOPATH=~/documents/programming/go
+export GOBIN=~/documents/programming/go/bin
