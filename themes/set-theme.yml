@@ -1,0 +1,59 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+  dotfiles_dir: "{{ ansible_env.HOME }}/documents/dotfiles"
+  tasks:
+  - name: Ensure theme variable is passed in
+    fail:
+      msg: "You must pass in a value for the 'theme' variable"
+    when: theme is not defined
+
+  - name: Ensure theme directory exists
+    block:
+    - stat:
+        path: "{{ dotfiles_dir }}/themes/{{ theme }}"
+        register: theme_exists
+
+    - fail:
+        msg: "Directory for {{ theme }} does not exist"
+
+  - name: Change theme symlink
+    file:
+      state: link
+      src: "{{ dotfiles_dir }}/themes/{{ theme }}"
+      dest: "{{ dotfiles_dir }}/themes/default"
+
+  - name: Ensure external symlinks are set
+    block:
+    - name: i3 Configuration
+      file:
+        state: link
+        src: "{{ dotfiles_dir }}/themes/default/i3.config"
+        dest: "{{ ansible_env.HOME }}/.config/i3/config"
+
+    - name: Polybar Configuration
+      file:
+        state: link
+        src: "{{ dotfiles_dir }}/themes/default/polybar.config"
+        dest: "{{ ansible_env.HOME }}/.config/polybar/config"
+
+    - name: .Xresources.d
+      file:
+        state: link
+        src: "{{ dotfiles_dir }}/themes/default"
+        dest: "{{ ansible_env.HOME }}/.Xresources.d"
+
+    - name: .Xresources
+      file:
+        state: link
+        src: "{{ dotfiles_dir }}/.Xresources"
+        dest: "{{ ansible_env.HOME }}/.Xresources"
+
+  - name: Reset desktop
+    block:
+    - name: Reload .Xresources
+      shell: xrdb -I$HOME ~/.Xresources
+
+    - name: Reload i3
+      shell: i3-msg restart
