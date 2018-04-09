@@ -2,21 +2,22 @@
 - hosts: localhost
   gather_facts: no
   vars:
-  dotfiles_dir: "{{ ansible_env.HOME }}/documents/dotfiles"
+    dotfiles_dir: "{{ lookup('env', 'HOME') }}/documents/dotfiles"
   tasks:
   - name: Ensure theme variable is passed in
     fail:
-      msg: "You must pass in a value for the 'theme' variable"
+      msg: "You must pass in a value for the 'theme' variable (e.g. ansible-playbook -v set-theme.yml -e theme=example-theme)"
     when: theme is not defined
 
   - name: Ensure theme directory exists
     block:
     - stat:
         path: "{{ dotfiles_dir }}/themes/{{ theme }}"
-        register: theme_exists
+      register: theme_exists
 
     - fail:
-        msg: "Directory for {{ theme }} does not exist"
+        msg: "Directory for theme '{{ theme }}' does not exist"
+      when: not theme_exists.stat.exists
 
   - name: Change theme symlink
     file:
@@ -30,25 +31,25 @@
       file:
         state: link
         src: "{{ dotfiles_dir }}/themes/default/i3.config"
-        dest: "{{ ansible_env.HOME }}/.config/i3/config"
+        dest: "{{ lookup('env', 'HOME') }}/.config/i3/config"
 
     - name: Polybar Configuration
       file:
         state: link
         src: "{{ dotfiles_dir }}/themes/default/polybar.config"
-        dest: "{{ ansible_env.HOME }}/.config/polybar/config"
+        dest: "{{ lookup('env', 'HOME') }}/.config/polybar/config"
 
     - name: .Xresources.d
       file:
         state: link
         src: "{{ dotfiles_dir }}/themes/default"
-        dest: "{{ ansible_env.HOME }}/.Xresources.d"
+        dest: "{{ lookup('env', 'HOME') }}/.Xresources.d"
 
     - name: .Xresources
       file:
         state: link
         src: "{{ dotfiles_dir }}/.Xresources"
-        dest: "{{ ansible_env.HOME }}/.Xresources"
+        dest: "{{ lookup('env', 'HOME') }}/.Xresources"
 
   - name: Reset desktop
     block:

@@ -1,12 +1,12 @@
 ! Theme
-#define theme_background            #5D221C
+#define theme_background            #263238
 #define theme_background_urxvt  [80]#263238
 #define theme_background_rofi       #263238
 #define theme_foreground            #E16359
 #define theme_foreground_urxvt      #E16359
 #define theme_foreground_rofi       #B44448
 #define theme_foreground_accent     #D8C194
-#define theme_text                  #FFFBF6
+#define theme_text                  #BDD979
 #define theme_invisible             #00000000
 #define theme_border                #5D221C
 #define theme_urgent                #B44448
