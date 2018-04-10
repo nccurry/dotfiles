@@ -4,7 +4,7 @@
 #define theme_background_rofi       #B3000000
 #define theme_foreground            #5a8c4e
 #define theme_foreground_urxvt      #b8d98f
-#define theme_foreground_rofi       #b8d98f
+#define theme_foreground_rofi       #5a8c4e
 #define theme_foreground_accent     #857365
 #define theme_text                  #FFFDFB
 #define theme_invisible             #00000000
