@@ -1,5 +1,5 @@
 ! Theme
-#define theme_background            #353945
+#define theme_background            #00071A
 #define theme_background_urxvt  [70]#000000
 #define theme_background_rofi       #B3000000
 #define theme_foreground            #5a8c4e
@@ -16,7 +16,7 @@
 #define theme_color8  #454545
 
 ! Red
-#define theme_color1  #835f4f
+#define theme_color1  #e58a62
 #define theme_color9  #be5224
 
 ! Green

@@ -24,6 +24,8 @@
       src: .exports
     - path: ~/.config/user-dirs.dirs
       src: user-dirs.dirs
+    - path: /etc/udev/rules.d/49-teensy.rules
+      src: ergodox/49-teensy.rules
   - base_packages:
     - vim
     - fuse-exfat
