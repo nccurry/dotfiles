@@ -46,6 +46,7 @@ URxvt*scrollColor:        theme_foreground
 URxvt*scrollBar_floating: true
 URxvt*scrollBar_right:    true
 URxvt*scrollstyle:        plain
+URxvt*imLocale:           en_US.UTF-8
 ! do not scroll with output
 URxvt*scrollTtyOutput:      false
 URxvt*scrollWithBuffer:     true
