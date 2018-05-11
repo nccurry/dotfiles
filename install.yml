@@ -85,11 +85,12 @@
         repo_gpgcheck: no
         enabled: yes
 
-    - name: Add RPMFusion repositories
+    - name: Add third-party repositories
       dnf:
         name: "{{ item }}"
         state: present
         with_items:
+        - fedora-workstation-repositories
         - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm"
         - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm"
 
@@ -128,7 +129,7 @@
       force: yes
       state: link
     with_items: "{{ dotfiles }}"
-    when: "{{ install_dotfiles }}"
+    when: install_dotfiles
 
   - name: Fix Xfce4 issue where .Xresources doesn't get loaded properly on boot
     lineinfile:
@@ -164,8 +165,6 @@
         repo: https://github.com/jaagr/polybar.git
         dest: /tmp/polybar
         version: "{{ polybar_version }}"
-
-    -
     when: install_polybar
 
   - name: Build/Install Arc Icons
