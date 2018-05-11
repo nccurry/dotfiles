@@ -1,12 +1,13 @@
 - hosts: localhost
   connection: local
-	become: yes
+  become: yes
   gather_facts: yes
   vars:
   - install_base: yes
   - install_dotfiles: yes
   - install_arc_icons: no
   - install_adapta: no
+  - install_teensy: no
   - dotfiles:
     - path: ~/.config/i3/config
       src: themes/default/i3.config
@@ -70,6 +71,7 @@
     - autoconf
     - automake
   - adapta_theme_packages: []
+  - teensy_url: https://www.pjrc.com/teensy/teensy_linux64.tar.gz
   tasks:
   - name: Install base configuration
     block:
@@ -193,3 +195,11 @@
     - name: Set system icons to Arc icons
       command: xfconf-query --channel xsettings --property /Net/IconThemeName --set Arc
     when: install_arc_icons
+
+  - name: Install teensy ergodox loader
+    block:
+    - name: Download files
+      get_url:
+        url: "{{ teensy_url }}"
+        dest: "{{ ansivle_env.HOME }}/downloads/teensy.tar.gz"
+    when: install_teensy
