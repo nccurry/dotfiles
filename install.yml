@@ -106,7 +106,7 @@
       dnf:
         name: "{{ item }}"
         state: present
-        with_items: "{{ base_packages + development_packages }}"
+      with_items: "{{ base_packages + development_packages }}"
 
     - name: Configure system to not sleep on laptop lid close when docked
       lineinfile:
