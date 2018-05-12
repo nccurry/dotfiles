@@ -9,21 +9,21 @@
   - install_adapta: no
   - install_teensy: no
   - dotfiles:
-    - path: ~/.config/i3/config
+    - path: "{{ ansible_env.HOME }}/.config/i3/config"
       src: themes/default/i3.config
-    - path: ~/.config/polybar/config
+    - path: "{{ ansible_env.HOME }}/.config/polybar/config"
       src: themes/default/polybar.config
-    - path: ~/.Xresources
+    - path: "{{ ansible_env.HOME }}/.Xresources"
       src: .Xresources
-    - path: ~/.Xresources.d
+    - path: "{{ ansible_env.HOME }}/.Xresources.d"
       src: themes/default
-    - path: ~/.bashrc
+    - path: "{{ ansible_env.HOME }}/.bashrc"
       src: .bashrc
-    - path: ~/.bash_profile
+    - path: "{{ ansible_env.HOME }}/.bash_profile"
       src: .bash_profile
-    - path: ~/.exports
+    - path: "{{ ansible_env.HOME }}/.exports"
       src: .exports
-    - path: ~/.config/user-dirs.dirs
+    - path: "{{ ansible_env.HOME }}/.config/user-dirs.dirs"
       src: user-dirs.dirs
     - path: /etc/udev/rules.d/49-teensy.rules
       src: ergodox/49-teensy.rules
@@ -33,7 +33,6 @@
     - tree
     - git
     - fontawesome-fonts
-    - flash-plugin
     - i3-gaps
     - rxvt-unicode
     - feh
@@ -42,7 +41,7 @@
     - i3lock
     - adobe-source-code-pro-fonts
     - qdirstat
-    - '@virtulization'
+    - '@virtualization'
     - ImageMagick
     - scrot
     - adapta-gtk-theme
@@ -72,6 +71,7 @@
     - automake
   - adapta_theme_packages: []
   - teensy_url: https://www.pjrc.com/teensy/teensy_linux64.tar.gz
+  - flash_plugin: https://get.adobe.com/flashplayer/download/?installer=FP_29.0_for_Linux_64-bit_(YUM)&stype=7564&standalone=1
   tasks:
   - name: Install base configuration
     block:
@@ -139,6 +139,14 @@
 
     when: install_base
 
+  - name: Create symlink directories
+    file:
+      state: directory
+      path: "{{ item }}"
+    with_items:
+    - "{{ ansible_env.HOME }}/.config/i3"
+    - "{{ ansible_env.HOME }}/.config/polybar"
+
   - name: Symlink dotfiles
     file:
       path: "{{ item.path }}"
@@ -195,16 +203,16 @@
 
     - name: Clone Arc Icons Source
       git:
-        dest: ~/documents/src/arc-icon-theme
+        dest: "{{ ansible_env.HOME }}/documents/src/arc-icon-theme"
         depth: 1
         repo: https://github.com/horst3180/arc-icon-theme.git
 
     - name: Run autogen.sh
-      shell: "~/documents/src/arc-icon-theme/autogen.sh --prefix=/usr"
+      shell: "{{ ansible_env.HOME }}/documents/src/arc-icon-theme/autogen.sh --prefix=/usr"
 
     - name: Make install
       make:
-        chdir: ~/documents/src/arc-icon-theme
+        chdir: "{{ ansible_env.HOME }}/documents/src/arc-icon-theme"
         target: install
       become: yes
 
@@ -217,5 +225,5 @@
     - name: Download files
       get_url:
         url: "{{ teensy_url }}"
-        dest: "{{ ansivle_env.HOME }}/downloads/teensy.tar.gz"
+        dest: "{{ ansible_env.HOME }}/downloads/teensy.tar.gz"
     when: install_teensy
