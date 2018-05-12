@@ -97,7 +97,7 @@
       - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm"
       - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm"
 
-    - name: Update OS packages
+    - name: Update packages
       dnf:
         name: '*'
         state: latest
@@ -108,20 +108,35 @@
         state: present
         with_items: "{{ base_packages + development_packages }}"
 
-    - name: Configure passwordless sudo for wheel
-      lineinfile:
-        dest: /etc/sudoers
-        state: present
-        regexp: '^%wheel'
-        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
-        validate: 'visudo -cf %s'
-
     - name: Configure system to not sleep on laptop lid close when docked
       lineinfile:
         dest: /etc/systemd/logind.conf
         state: present
         regexp: '#HandleLidSwitchDocked=ignore'
         line: 'HandleLidSwitchDocked=ignore'
+
+    - name: Remove default directories
+      file:
+        state: absent
+        path: "{{ ansible_env.HOME }}/{{ item }}"
+      with_items: 
+      - Desktop
+      - Documents
+      - Downloads
+      - Music
+      - Pictures
+      - Public
+      - Templates
+      - Videos
+
+    - name: Create default directories
+      file:
+        state: directory
+        path: "{{ ansible_env.HOME }}/{{ item }}"
+      with_items:
+      - downloads
+      - documents
+
     when: install_base
 
   - name: Symlink dotfiles
@@ -143,8 +158,8 @@
       backup: yes
 
   - name: Add wheel group to govern access to libvirt daemon
-    create: yes
     blockinfile:
+      create: yes
       state: present
       path: /etc/polkit-1/rules.d/49-org.libvirt.unix.manager.rules
       content: |
