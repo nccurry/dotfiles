@@ -79,7 +79,8 @@
       yum_repository:
         state: present
         file: /etc/yum.repos.d/_copr_yaroslav-i3desktop.repo
-        name: Copr repo for i3desktop owned by yaroslav
+        name: copr-yaroslav-i3
+        description: Copr repo for i3desktop owned by yaroslav
         baseurl: https://copr-be.cloud.fedoraproject.org/results/yaroslav/i3desktop/fedora-$releasever-$basearch/
         skip_if_unavailable: yes
         gpgcheck: yes
