@@ -112,7 +112,7 @@
       lineinfile:
         dest: /etc/systemd/logind.conf
         state: present
-        regexp: '#HandleLidSwitchDocked=ignore'
+        regexp: '^#HandleLidSwitchDocked=ignore$'
         line: 'HandleLidSwitchDocked=ignore'
 
     - name: Remove default directories
