@@ -11,8 +11,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'mileszs/ack.vim'
+"Plug '907th/vim-auto-save'
+Plug 'rhysd/vim-clang-format'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug '907th/vim-auto-save'
 
 "Plug 'tpope/vim-commentary'
 "Plug 'tpope/vim-surround'
@@ -88,6 +89,20 @@ let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit'
   \}
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 907th/vim-auto-save
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" enable AutoSave on Vim startup
+"let g:auto_save = 1  
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" rhysd/vim-clang-format
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Automatically format file on write
+autocmd FileType cpp ClangFormatAutoEnable
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " coc.vim configuration
@@ -212,6 +227,9 @@ nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 " General configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" Clear highlighting after searching by pressing escape
+nnoremap <esc> :noh<return><esc>
+
 " Show line numbers
 set number
 
@@ -261,7 +279,7 @@ set hlsearch
 " Makes search act like search in modern browsers
 set incsearch 
 
-" Don't redraw while executing macros (good performance config)
+" Don't redraw whila executing macros (good performance config)
 set lazyredraw
 
 " For regular expressions turn magic on
